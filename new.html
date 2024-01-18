@@ -1,40 +1,133 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
+<head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>我的网页</title>
-    <script>
-        //定义一个函数，用于将用户输入的文本添加到网页中
-        function sendText() {
-            //获取文本框的元素对象
-            var input = document.getElementById("input");
-            //获取文本框的内容
-            var text = input.value;
-            //判断文本是否为空
-            if (text == "") {
-                //如果为空，弹出提示信息
-                alert("请输入文本");
-            } else {
-                //如果不为空，创建一个新的段落元素
-                var p = document.createElement("p");
-                //将文本设置为段落的内容
-                                p.innerText = text;
-                //获取网页中显示文本的区域的元素对象
-                var output = document.getElementById("output");
-                //将段落添加到显示文本的区域中
-                output.appendChild(p);
-                //清空文本框的内容
-                input.value = "";
-            }
+    <title>公共文本上传</title>
+    <style>
+        #text-area {
+            width: 80%;
+            height: 300px;
+            margin: 10px auto;
+            border: 1px solid black;
+            overflow-y: scroll;
         }
-    </script>
+
+        #input-area {
+            width: 80%;
+            margin: 10px auto;
+            display: flex;
+            align-items: center;
+        }
+
+        #input-box {
+            flex: 1;
+            height: 30px;
+            border: 1px solid gray;
+        }
+
+        #send-button {
+            width: 80px;
+            height: 30px;
+            margin-left: 10px;
+            background-color: green;
+            color: white;
+            border: none;
+        }
+
+        #delete-button {
+            width: 80px;
+            height: 30px;
+            margin-left: 10px;
+            background-color: red;
+            color: white;
+            border: none;
+        }
+
+        .text-item {
+            margin: 5px;
+            padding: 5px;
+            border: 1px solid gray;
+        }
+    </style>
 </head>
 <body>
- <h1>欢迎来到我的网页</h1> <!-- 添加一个网页标题 -->
-    <p>这是一个简单的网页，您可以在下面的文本框中输入文本，然后点击发送按钮，文本就会显示在网页上。</p> <!-- 添加一个网页介绍 -->
-    <input type="text" id="input" placeholder="请输入文本"> <!-- 添加一个文本框，设置id和占位符 -->
-    <button onclick="sendText()">发送</button> <!-- 添加一个按钮，设置点击事件 -->
-    <div id="output"></div> <!-- 添加一个显示文本的区域，设置id -->
+    <div id="text-area">
+        <!-- 这里显示用户发送的文本 -->
+    </div>
+    <div id="input-area">
+        <input id="input-box" type="text" placeholder="请输入文本">
+        <button id="send-button">发送</button>
+        <button id="delete-button">删除</button>
+    </div>
+    <script>
+        // 获取元素
+        var textArea = document.getElementById("text-area");
+        var inputBox = document.getElementById("input-box");
+        var sendButton = document.getElementById("send-button");
+        var deleteButton = document.getElementById("delete-button");
+
+        // 定义一个数组，用来存储用户发送的文本
+        var textList = [];
+
+        // 定义一个函数，用来更新网页显示的文本
+        function updateText() {
+            // 清空文本区域
+            textArea.innerHTML = "";
+            // 遍历文本数组，创建文本元素并添加到文本区域
+            for (var i = 0; i < textList.length; i++) {
+                var textItem = document.createElement("div");
+                textItem.className = "text-item";
+                textItem.innerText = textList[i];
+                textArea.appendChild(textItem);
+            }
+            // 滚动到最底部
+            textArea.scrollTop = textArea.scrollHeight;
+        }
+
+        // 定义一个函数，用来发送文本
+        function sendText() {
+            // 获取输入框的值
+            var inputText = inputBox.value;
+            // 判断是否为空
+            if (inputText == "") {
+                alert("请输入文本");
+                return;
+            }
+            // 将输入框的值添加到文本数组
+            textList.push(inputText);
+            // 更新网页显示的文本
+            updateText();
+            // 清空输入框的值
+            inputBox.value = "";
+        }
+
+        // 定义一个函数，用来删除文本
+        function deleteText() {
+            // 判断文本数组是否为空
+            if (textList.length == 0) {
+                alert("没有可删除的文本");
+                return;
+            }
+            // 从文本数组中删除最后一个元素
+            textList.pop();
+            // 更新网页显示的文本
+            updateText();
+        }
+
+        // 给发送按钮添加点击事件
+        sendButton.addEventListener("click", sendText);
+
+        // 给删除按钮添加点击事件
+        deleteButton.addEventListener("click", deleteText);
+
+        // 给输入框添加回车事件
+        inputBox.addEventListener("keydown", function(event) {
+            // 判断是否按下回车键
+            if (event.keyCode == 13) {
+                // 调用发送文本的函数
+                sendText();
+            }
+        });
+    </script>
 </body>
 </html>
